@@ -1,29 +1,38 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const TASKS_PATH = '/Users/kokomumatsuo/clawd/memory/tasks.json';
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
-  try {
-    const data = fs.readFileSync(TASKS_PATH, 'utf8');
-    return NextResponse.json(JSON.parse(data));
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to load tasks' }, { status: 500 });
+  const { data, error } = await supabase
+    .from('tasks')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
+  return NextResponse.json({ tasks: data });
 }
 
 export async function POST(request: Request) {
-  try {
-    const newTask = await request.json();
-    const data = JSON.parse(fs.readFileSync(TASKS_PATH, 'utf8'));
-    
-    newTask.id = data.nextId++;
-    data.tasks.push(newTask);
-    
-    fs.writeFileSync(TASKS_PATH, JSON.stringify(data, null, 2));
-    return NextResponse.json(newTask);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to add task' }, { status: 500 });
+  const newTask = await request.json();
+  
+  const { data, error } = await supabase
+    .from('tasks')
+    .insert([{
+      category: newTask.category,
+      title: newTask.title,
+      status: newTask.status,
+      priority: newTask.priority,
+      assignee: newTask.assignee,
+      due_date: newTask.dueDate,
+      notes: newTask.notes,
+      repeat: newTask.repeat || 'none'
+    }])
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
+  return NextResponse.json(data);
 }
