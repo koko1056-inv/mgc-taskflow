@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MGC TaskFlow
 
-## Getting Started
+Next.js (App Router) をベースにした次世代タスク管理システム。
+`clawd/memory/tasks.json` を直接読み書きすることで、OpenClawエージェントとの完全なデータ同期を実現します。
 
-First, run the development server:
+## 技術スタック
+- **Frontend**: Next.js 15+, Tailwind CSS 4, shadcn/ui
+- **Backend**: Next.js API Routes (Route Handlers)
+- **Data**: Local JSON (`memory/tasks.json`)
 
+## ローカル実行方法
 ```bash
+cd mgc-taskflow
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+ブラウザで `http://localhost:3000` を開いてください。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Vercelへのデプロイ手順
+1. **GitHubリポジトリの作成**: このディレクトリ (`mgc-taskflow`) をGitHubにプッシュします。
+2. **Vercel連携**: Vercelダッシュボードからプロジェクトをインポートします。
+3. **注意点**: 現在の実装はローカルファイル (`/Users/...`) を参照しているため、Vercel上では動作しません。
+   - 恒久的な運用の場合は、DB (PostgreSQL / Supabase等) への移行、または GitHub API を経由した `tasks.json` の更新ロジックに切り替える必要があります。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ソースコード
+- 場所: `/Users/kokomumatsuo/clawd/mgc-taskflow`
+- メイン画面: `src/app/page.tsx`
+- APIロジック: `src/app/api/tasks/route.ts`
